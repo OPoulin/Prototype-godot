@@ -1,7 +1,7 @@
 [gd_scene load_steps=17 format=3 uid="uid://brgqqikxkyilx"]
 
 [ext_resource type="Texture2D" uid="uid://c8pegg8exqagd" path="res://Assets prototype/VFX/Effect_Character/587.png" id="1_5advf"]
-[ext_resource type="Script" path="res://Delete_VFX.gd" id="2_ci4vb"]
+[ext_resource type="Script" path="res://Scripts/Delete_VFX.gd" id="2_ci4vb"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_k3ccf"]
 atlas = ExtResource("1_5advf")

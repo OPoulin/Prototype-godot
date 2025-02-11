@@ -1,6 +1,6 @@
 [gd_scene load_steps=33 format=3 uid="uid://n6uijvfilyvp"]
 
-[ext_resource type="Script" path="res://Delete_VFX.gd" id="1_1krak"]
+[ext_resource type="Script" path="res://Scripts/Delete_VFX.gd" id="1_1krak"]
 [ext_resource type="Texture2D" uid="uid://cvs7j1ryupc1e" path="res://Assets prototype/VFX/Effect_Impact/60fps/Spritesheets/Effect_Impact_1_305x383.png" id="1_d4nv8"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_75155"]

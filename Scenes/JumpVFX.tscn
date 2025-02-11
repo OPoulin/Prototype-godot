@@ -1,7 +1,7 @@
 [gd_scene load_steps=13 format=3 uid="uid://otsjniw1275n"]
 
 [ext_resource type="Texture2D" uid="uid://ti3wdbhgmv1u" path="res://Assets prototype/VFX/Effect_Smoke/Smoke VFX3.png" id="1_1hx2n"]
-[ext_resource type="Script" path="res://Delete_VFX.gd" id="2_fkj1q"]
+[ext_resource type="Script" path="res://Scripts/Delete_VFX.gd" id="2_fkj1q"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_jtrd2"]
 atlas = ExtResource("1_1hx2n")

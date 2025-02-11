@@ -2,7 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://vx38je76e352" path="res://Assets prototype/VFX/Effect_Character/567.png" id="1_1l1hj"]
 [ext_resource type="Texture2D" uid="uid://s3t7no7fkbhb" path="res://Assets prototype/VFX/Effect_Charged/60fps/Spritesheets/Effect_Charged_1_357x295.png" id="2_vjvh5"]
-[ext_resource type="Script" path="res://Delete_VFX.gd" id="3_mc0tg"]
+[ext_resource type="Script" path="res://Scripts/Delete_VFX.gd" id="3_mc0tg"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_fnidc"]
 atlas = ExtResource("1_1l1hj")

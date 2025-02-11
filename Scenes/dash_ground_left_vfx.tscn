@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://buorwx1sum0rq"]
 
-[ext_resource type="SpriteFrames" uid="uid://bhy51m0jx86yn" path="res://dash_ground_vfx.tres" id="1_j6fty"]
-[ext_resource type="Script" path="res://Delete_VFX.gd" id="2_fc76s"]
+[ext_resource type="SpriteFrames" uid="uid://bhy51m0jx86yn" path="res://Animations/dash_ground_vfx.tres" id="1_j6fty"]
+[ext_resource type="Script" path="res://Scripts/Delete_VFX.gd" id="2_fc76s"]
 
 [node name="DashgroundLeftVFX" type="AnimatedSprite2D"]
 scale = Vector2(2, 2)

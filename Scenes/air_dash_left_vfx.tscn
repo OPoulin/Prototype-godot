@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://qoqfxi1l1m7q"]
 
-[ext_resource type="SpriteFrames" uid="uid://dlevkd5xj78d6" path="res://air_dash_vfx.tres" id="1_4fu1k"]
-[ext_resource type="Script" path="res://Delete_VFX.gd" id="2_mca6f"]
+[ext_resource type="SpriteFrames" uid="uid://dlevkd5xj78d6" path="res://Animations/air_dash_vfx.tres" id="1_4fu1k"]
+[ext_resource type="Script" path="res://Scripts/Delete_VFX.gd" id="2_mca6f"]
 
 [node name="AirDashLeftVFX" type="AnimatedSprite2D"]
 scale = Vector2(1.6, 1.6)
