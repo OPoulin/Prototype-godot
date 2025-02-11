@@ -1,0 +1,115 @@
+[gd_scene load_steps=17 format=3 uid="uid://brgqqikxkyilx"]
+
+[ext_resource type="Texture2D" uid="uid://c8pegg8exqagd" path="res://Assets prototype/VFX/Effect_Character/587.png" id="1_5advf"]
+[ext_resource type="Script" path="res://Delete_VFX.gd" id="2_ci4vb"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_k3ccf"]
+atlas = ExtResource("1_5advf")
+region = Rect2(0, 320, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_khrga"]
+atlas = ExtResource("1_5advf")
+region = Rect2(64, 320, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5jhvv"]
+atlas = ExtResource("1_5advf")
+region = Rect2(128, 320, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_smwuh"]
+atlas = ExtResource("1_5advf")
+region = Rect2(192, 320, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m5v6g"]
+atlas = ExtResource("1_5advf")
+region = Rect2(256, 320, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_67tgn"]
+atlas = ExtResource("1_5advf")
+region = Rect2(320, 320, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mth7c"]
+atlas = ExtResource("1_5advf")
+region = Rect2(384, 320, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1fp1h"]
+atlas = ExtResource("1_5advf")
+region = Rect2(448, 320, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3mebj"]
+atlas = ExtResource("1_5advf")
+region = Rect2(512, 320, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_41pne"]
+atlas = ExtResource("1_5advf")
+region = Rect2(576, 320, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ghn00"]
+atlas = ExtResource("1_5advf")
+region = Rect2(640, 320, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_d2cgo"]
+atlas = ExtResource("1_5advf")
+region = Rect2(704, 320, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bdiva"]
+atlas = ExtResource("1_5advf")
+region = Rect2(768, 320, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_li5mf"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_k3ccf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_khrga")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5jhvv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_smwuh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_m5v6g")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_67tgn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mth7c")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1fp1h")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3mebj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_41pne")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ghn00")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_d2cgo")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bdiva")
+}, {
+"duration": 1.0,
+"texture": null
+}],
+"loop": false,
+"name": &"Land",
+"speed": 14.0
+}]
+
+[node name="LandingVFX" type="AnimatedSprite2D"]
+scale = Vector2(2, 2)
+sprite_frames = SubResource("SpriteFrames_li5mf")
+animation = &"Land"
+autoplay = "Land"
+frame = 13
+frame_progress = 1.0
+script = ExtResource("2_ci4vb")

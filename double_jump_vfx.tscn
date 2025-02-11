@@ -1,0 +1,87 @@
+[gd_scene load_steps=13 format=3 uid="uid://cklemjcfhwc7t"]
+
+[ext_resource type="Texture2D" uid="uid://bguv5oek431kf" path="res://Assets prototype/VFX/Effect_Smoke/SmokeNDust P03 VFX 4.png" id="1_42805"]
+[ext_resource type="Script" path="res://Delete_VFX.gd" id="2_pca03"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5w4qr"]
+atlas = ExtResource("1_42805")
+region = Rect2(512, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5iulu"]
+atlas = ExtResource("1_42805")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ablvy"]
+atlas = ExtResource("1_42805")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mnerm"]
+atlas = ExtResource("1_42805")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0ve0u"]
+atlas = ExtResource("1_42805")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1gsmy"]
+atlas = ExtResource("1_42805")
+region = Rect2(256, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_oelsi"]
+atlas = ExtResource("1_42805")
+region = Rect2(320, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ewrn7"]
+atlas = ExtResource("1_42805")
+region = Rect2(384, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8ink0"]
+atlas = ExtResource("1_42805")
+region = Rect2(448, 0, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_ylmpy"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5w4qr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5iulu")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ablvy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mnerm")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0ve0u")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1gsmy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_oelsi")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ewrn7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8ink0")
+}],
+"loop": false,
+"name": &"DoubleJump",
+"speed": 14.0
+}]
+
+[node name="DoubleJumpVFX" type="AnimatedSprite2D"]
+top_level = true
+scale = Vector2(3.5, 3.5)
+sprite_frames = SubResource("SpriteFrames_ylmpy")
+animation = &"DoubleJump"
+autoplay = "DoubleJump"
+frame = 8
+frame_progress = 1.0
+script = ExtResource("2_pca03")
+
+[connection signal="animation_finished" from="." to="." method="_on_animation_finished"]

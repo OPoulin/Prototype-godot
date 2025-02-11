@@ -1,0 +1,112 @@
+[gd_resource type="SpriteFrames" load_steps=16 format=3 uid="uid://bhy51m0jx86yn"]
+
+[ext_resource type="Texture2D" uid="uid://cgo1yv86susek" path="res://Assets prototype/VFX/Effect_Character/577.png" id="1_l4ik4"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7xybr"]
+atlas = ExtResource("1_l4ik4")
+region = Rect2(0, 320, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vw2db"]
+atlas = ExtResource("1_l4ik4")
+region = Rect2(64, 320, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r84tt"]
+atlas = ExtResource("1_l4ik4")
+region = Rect2(128, 320, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_p6sj2"]
+atlas = ExtResource("1_l4ik4")
+region = Rect2(192, 320, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uw0ss"]
+atlas = ExtResource("1_l4ik4")
+region = Rect2(256, 320, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_28js3"]
+atlas = ExtResource("1_l4ik4")
+region = Rect2(320, 320, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_h447q"]
+atlas = ExtResource("1_l4ik4")
+region = Rect2(384, 320, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_t3x07"]
+atlas = ExtResource("1_l4ik4")
+region = Rect2(448, 320, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bbyjx"]
+atlas = ExtResource("1_l4ik4")
+region = Rect2(512, 320, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tbcci"]
+atlas = ExtResource("1_l4ik4")
+region = Rect2(576, 320, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_niyhy"]
+atlas = ExtResource("1_l4ik4")
+region = Rect2(640, 320, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6ot7c"]
+atlas = ExtResource("1_l4ik4")
+region = Rect2(704, 320, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_84cwe"]
+atlas = ExtResource("1_l4ik4")
+region = Rect2(768, 320, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_k4ddt"]
+atlas = ExtResource("1_l4ik4")
+region = Rect2(832, 320, 64, 64)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7xybr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vw2db")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_r84tt")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_p6sj2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uw0ss")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_28js3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_h447q")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_t3x07")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bbyjx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tbcci")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_niyhy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6ot7c")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_84cwe")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_k4ddt")
+}, {
+"duration": 1.0,
+"texture": null
+}],
+"loop": false,
+"name": &"DashVFX",
+"speed": 20.0
+}]
