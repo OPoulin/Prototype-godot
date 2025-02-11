@@ -1,4 +1,4 @@
-[gd_scene load_steps=176 format=3 uid="uid://bu8i6cytjnbpk"]
+[gd_scene load_steps=177 format=3 uid="uid://bu8i6cytjnbpk"]
 
 [ext_resource type="Script" path="res://Scripts/player.gd" id="1_lrsar"]
 [ext_resource type="PackedScene" uid="uid://otsjniw1275n" path="res://Scenes/JumpVFX.tscn" id="2_0fxkb"]
@@ -22,6 +22,7 @@
 [ext_resource type="PackedScene" uid="uid://cr87clhavhsnu" path="res://Scenes/air_dash_right_vfx.tscn" id="9_6esxg"]
 [ext_resource type="Texture2D" uid="uid://c35uuhve5o5fx" path="res://Assets prototype/Character/Character_sprites_placeholder/Spritesheets/DASH NO EFFECT.png" id="9_j8v50"]
 [ext_resource type="PackedScene" uid="uid://n6uijvfilyvp" path="res://Scenes/grappling_hook_get_vfx.tscn" id="10_c3sua"]
+[ext_resource type="PackedScene" uid="uid://dhogox82tiidn" path="res://Scenes/rope_part.tscn" id="11_4k80s"]
 [ext_resource type="Texture2D" uid="uid://dc1i35uj2jnl5" path="res://Assets prototype/Character/Character_sprites_placeholder/Spritesheets/WALK.png" id="23_ef6bh"]
 [ext_resource type="Texture2D" uid="uid://ceowdvr14o3lr" path="res://Assets prototype/Character/Character_sprites_placeholder/Spritesheets/THROW.png" id="23_pgjeq"]
 [ext_resource type="Texture2D" uid="uid://c8kuiu5r4gjw2" path="res://Assets prototype/Character/Character_sprites_placeholder/Spritesheets/RUN.png" id="24_i5l67"]
@@ -1153,6 +1154,7 @@ AirDashRightVFXScene = ExtResource("9_6esxg")
 GrappleGetVFXScene = ExtResource("10_c3sua")
 SPEED = 500.0
 maxRopeLength = 600
+rope_part_scene = ExtResource("11_4k80s")
 metadata/_edit_group_ = true
 
 [node name="Camera2D" type="Camera2D" parent="."]

@@ -54,6 +54,10 @@ var fireHook = false # Bool for the animation of the throw
 var hookSpeed: float # Float to keep player speed when firing the hook in the air
 var canHook = true # Bool to allow the use of the grappling hook
 
+var piece_length := 4.0 # Float to set the length of each rope piece
+var rope_parts := [] # Array to contain all rope parts
+@export var rope_part_scene: PackedScene # Scene containing the rope segments
+
 # Animation bools
 var jumpDescentAnim = false # jump to say that the transition between ascent and descent has played out fully
 var hasJumped = false # Bool that says if the player has jumped
@@ -623,6 +627,7 @@ func _input(event):
 		
 	if (event is InputEventJoypadButton or event is InputEventJoypadMotion) and event.is_pressed():
 		Input.mouse_mode = Input.MOUSE_MODE_HIDDEN # Hides the mouse
+	
 
 func _buffer_jump(): # Provides a 0.05s buffer for the player to jump before actually hitting the ground
 	saute = true
@@ -671,9 +676,48 @@ func _hook_mouse():
 	if get_global_mouse_position().x > position.x :
 		_animated_sprite.flip_h = false
 		$RayCastGrapplingHookRight.look_at(get_global_mouse_position())
+		_show_rope()
+		
+		## What remains of the grappling hook mechanic
+		#if $RayCastGrapplingHookRight.is_colliding():
+			#var distance = global_position.distance_to(get_global_mouse_position())
+			#_spawn_rope_segments(round(distance / 30))
+		
 	elif get_global_mouse_position().x < position.x :
 		_animated_sprite.flip_h = true
 		$RayCastGrapplingHookLeft.look_at(get_global_mouse_position())
+		_show_rope()
+	
+
+func _show_rope():
+	if $RayCastGrapplingHookRight.is_colliding() == true:
+			var rope = rope_part_scene.instantiate()
+			rope.position = $RayCastGrapplingHookRight.global_position
+			rope.look_at(get_global_mouse_position())
+			rope.rotation += deg_to_rad(90)
+			print(get_node('rope_apart'))
+			add_sibling(rope)
+
+#func _spawn_rope_segments(count):
+	#print(count)
+	#for i in count:
+		#if i == count - 1:
+			#print('Last rope')
+			#_spawn_rope()
+			#_attach_rope_to_rope()
+			#_attach_rope_to_player()
+		#elif i == 0:
+			#print('First rope')
+			#_spawn_rope()
+		#else:
+			#print('Middle Rope')
+			#_spawn_rope()
+			#_attach_rope_to_rope()
+## Abandoned code for the grappling mechanic, I don't have time nor energy to make it work right now, might come back to it
+#func _spawn_rope():
+	#var rope = rope_part_scene.instantiate()
+	#if _animated_sprite.flip_h == false:
+		#rope.global_position = $RayCastGrapplingHookRight.target_position.get_global_position()
 
 # ALL FUNCTIONS RELATED TO TIMERS BELOW THIS POINT
 
@@ -810,6 +854,10 @@ func _on_attack_collision_timer_timeout():
 func _on_grappling_hook_reset_timer_timeout(): # If the grappling hook touches nothing
 	fireHook = false
 	canAttack = true
+	#if _animated_sprite.flip_h == false and $RayCastGrapplingHookRight.is_colliding() == true:
+		#get_tree().get_root().get_node('rope').queue_free()
+	#elif _animated_sprite.flip_h == true and $RayCastGrapplingHookLeft.is_colliding() == true:
+		#get_tree().get_root().get_node('rope').queue_free()
 
 
 func _on_between_grappling_hook_timer_timeout():

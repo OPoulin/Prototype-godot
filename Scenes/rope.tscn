@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://grm2j7oni70u"]
+
+[ext_resource type="Script" path="res://Scripts/rope.gd" id="1_lula8"]
+
+[node name="Node" type="Node"]
+script = ExtResource("1_lula8")
