@@ -53,6 +53,9 @@ var aimDirection = Vector2(0,0) # Direction the player is aiming with the right 
 var fireHook = false # Bool for the animation of the throw
 var hookSpeed: float # Float to keep player speed when firing the hook in the air
 var canHook = true # Bool to allow the use of the grappling hook
+var raycastHit # Game object that contains which raycast hit a wall
+var hasHit = false # Bool to check if the grapple has actually hit something
+var collisionPoint = Vector2(0,0) # Point where the grappling hook hit
 
 var piece_length := 4.0 # Float to set the length of each rope piece
 var rope_parts := [] # Array to contain all rope parts
@@ -79,14 +82,14 @@ func _ready(): # Triggers once as soon as the scene is ready
 func _physics_process(delta):
 	
 	# Add the gravity.
-	if not is_on_floor() and not isDashing and not onWall and fireHook == false and isHooked == false:
+	if not is_on_floor() and not isDashing and not onWall and fireHook == false and isHooked == false and hasHit == false:
 		velocity += get_gravity() * delta * gravityModifier # Makes player fall fast
 		if velocity.y > 1600:
 			velocity.y = 1600
 	
 	
 	# Adds gravity if not jumping
-	if not is_on_floor() and saute == false and not isDashing and not onWall and fireHook == false and isHooked == false:
+	if not is_on_floor() and saute == false and not isDashing and not onWall and fireHook == false and isHooked == false and hasHit == false:
 		gravityModifier += 0.06
 		onFloor = false
 	
@@ -124,8 +127,10 @@ func _physics_process(delta):
 			var dashResetVFX = DashRechargeVFXScene.instantiate()
 			dashResetVFX.position = $PositionPlayer.global_position + Vector2(0, -20)
 			add_sibling(dashResetVFX)
-			if Input.get_axis('Move_left', 'Move_right') != 0:
-				var directionDash = Input.get_axis('Move_left', 'Move_right') ## I DO NOT REMEMBER WHAT THIS WAS FOR AT ALL
+			
+			## I DO NOT REMEMBER WHAT THIS WAS FOR AT ALL
+			#if Input.get_axis('Move_left', 'Move_right') != 0:
+				#var directionDash = Input.get_axis('Move_left', 'Move_right')
 	
 	
 	if is_on_floor() and saute == false: # Plays the landing vfx scene once the player touches the ground after being in the air
@@ -180,8 +185,8 @@ func _physics_process(delta):
 			saute = false
 			ascent = false
 			doubleSaut = false
-			fireHook = false
-			isHooked = false
+			hasHit = false
+			inertiaWallJump = false
 			$ResetJumpTimer.stop()
 			$JumpAscentTimer.stop()
 			jumpBuffer = false
@@ -203,7 +208,8 @@ func _physics_process(delta):
 			$DashResetTimer.stop()
 			velocity.y = 0
 			gravityModifier = 1
-		
+	elif is_on_wall() and is_on_floor() and canCling and ($RayCastCheckRightTop.is_colliding() or $RayCastCheckLeftTop.is_colliding()) and ($RayCastCheckLeftBottom.is_colliding() or $RayCastCheckRightBottom.is_colliding()):
+		_animated_sprite.position = Vector2(0,0)
 	
 	if is_on_wall_only() and onWall == true: # Goes down when pressing down on a wall
 		if Input.is_action_pressed('Look_down'):
@@ -222,6 +228,15 @@ func _physics_process(delta):
 			if _animated_sprite.animation != 'Wall_cling_right':
 				_animated_sprite.play('Wall_cling_right')
 			
+	
+	if is_on_wall() or is_on_ceiling() or is_on_floor():
+		if isHooked == true:
+			isHooked = false
+			canMove = true
+			canAttack = true
+			fireHook = false
+			hasHit = false
+	
 	
 	if Input.is_action_just_released('Look_down') and onWall == true: # Here to ensure it properly stops, double checking basically
 			# print('stop going down')
@@ -266,12 +281,13 @@ func _physics_process(delta):
 			_animated_sprite.flip_h = false
 	
 	
+	
 	var Joystick = Input.get_axis('Move_left', 'Move_right')
-	if is_on_floor() == false and inertiaWallJump == true and Joystick == 0 and dashOnce == false:
-		if lookingLeft == true:
-			velocity.x = 500
-		elif lookingRight == true:
-			velocity.x = -500
+	if is_on_floor() == false and inertiaWallJump == true and Joystick == 0 and dashOnce == false: # adds a velocity to the player when jumping from a wall without any direction inputed
+		if left == true:
+			velocity.x = -602
+		elif right == true:
+			velocity.x = 602
 	elif Joystick != 0:
 		inertiaWallJump = false
 	
@@ -315,14 +331,20 @@ func _physics_process(delta):
 		JUMP_VELOCITY = JUMP_VELOCITY * 0.98
 		velocity.y = JUMP_VELOCITY
 	
-	if fireHook == true and not is_on_floor():
+	if fireHook == true and not is_on_floor() and isHooked == false:
 		if hookSpeed == null or hookSpeed == 0:
 			hookSpeed = velocity.x
-			print('setting speed')
-			print(velocity.x)
+			# print('setting speed')
+			# print(velocity.x)
 		if velocity.x <= 0:
 			velocity.x = hookSpeed
-		
+	
+	if isHooked == true:
+		canMove = false
+		canAttack = false
+		position += position.direction_to(collisionPoint) * 2500 * delta
+	
+	
 	
 	# Get the input direction and handle the movement/deceleration.
 	var direction = Input.get_axis("Move_left", "Move_right")
@@ -352,7 +374,7 @@ func _physics_process(delta):
 	if direction > 0:
 		lookingRight = true
 		lookingLeft = false
-	else:
+	elif direction < 0:
 		lookingLeft = true
 		lookingRight = false
 	
@@ -448,34 +470,41 @@ func _physics_process(delta):
 	if Input.is_action_pressed('Look_down') and Input.is_action_just_pressed('Drop_through') and is_on_floor() and isAttacking == false and fireHook == false:
 		gravityModifier = 2.5
 		if $RayCastCheckGround.is_colliding():
-			var collider = $RayCastCheckGround.get_collider()
-			var cell = collider.local_to_map($RayCastCheckGround.get_collision_point())
-			if cell == Vector2i(2, 2) or cell == Vector2i(1, 2) or cell == Vector2i(0, 2):
-				$CollisionShape2D.disabled = true
-				$DropThroughTimer.start()
+			#var collider = $RayCastCheckGround.get_collider()
+			#var cell = collider.local_to_map($RayCastCheckGround.get_collision_point())
+			global_position += Vector2(0, 3)
+			print('aaa')
+			#if cell == Vector2i(2, 2) or cell == Vector2i(1, 2) or cell == Vector2i(0, 2):
+				#$CollisionShape2D.disabled = true
+				#$DropThroughTimer.start()
 		elif $RayCastCheckGround2.is_colliding():
-			var collider2 = $RayCastCheckGround2.get_collider()
-			var cell2 = collider2.local_to_map($RayCastCheckGround2.get_collision_point())
-			if cell2 == Vector2i(2, 2) or cell2 == Vector2i(1, 2) or cell2 == Vector2i(0, 2):
-				$CollisionShape2D.disabled = true
-				$DropThroughTimer.start()
+			#var collider2 = $RayCastCheckGround2.get_collider()
+			#var cell2 = collider2.local_to_map($RayCastCheckGround2.get_collision_point())
+			global_position += Vector2(0, 3)
+			#if cell2 == Vector2i(2, 2) or cell2 == Vector2i(1, 2) or cell2 == Vector2i(0, 2):
+				#$CollisionShape2D.disabled = true
+				#$DropThroughTimer.start()
 	
 	aimDirection.x = -Input.get_action_strength('Move_left') + Input.get_action_strength('Move_right')
 	aimDirection.y = +Input.get_action_strength('Look_down') - Input.get_action_strength('Look_up')
 	
-	if Input.is_action_just_pressed('Grapple_gamepad') and onWall == false and isAttacking == false and airAttack == false and fireHook == false and canHook == true:
+	if Input.is_action_just_pressed('Grapple_gamepad') and onWall == false and isAttacking == false and airAttack == false and fireHook == false and canHook == true and not is_on_floor():
 		_hook_gamepad()
 		fireHook = true
 		canAttack = false
+		isDashing = false
+		velocity.x = 0
 		canHook = false
 		_animated_sprite.play('Throw_begin')
 		$GrapplingHookResetTimer.start()
 		$BetweenGrapplingHookTimer.start()
 	
-	if Input.is_action_just_pressed('Grapple_mouse') and onWall == false and isAttacking == false and airAttack == false and fireHook == false and canHook == true:
+	if Input.is_action_just_pressed('Grapple_mouse') and onWall == false and isAttacking == false and airAttack == false and fireHook == false and canHook == true and not is_on_floor():
 		_hook_mouse()
 		fireHook = true
 		canAttack = false
+		isDashing = false
+		velocity.x = 0
 		canHook = false
 		_animated_sprite.play('Throw_begin')
 		$GrapplingHookResetTimer.start()
@@ -524,14 +553,14 @@ func _process(delta):
 			#$Camera2D.position = cameraOriginalPosition
 	
 	# Changes player sprite to the jumping one in order
-	if velocity.y < -15 and saute == true and not is_on_floor() and not isAttacking and not airAttack and dashAnim == false and fireHook == false: # PLays the ascent part of the jump
+	if velocity.y < -15 and saute == true and not is_on_floor() and not isAttacking and not airAttack and dashAnim == false and fireHook == false and isHooked == false: # PLays the ascent part of the jump
 		_animated_sprite.play('Jump_start')
 	
-	if velocity.y > -15 and jumpDescentAnim == false and hasJumped == true and airAttack == false and dashAnim == false and onWall == false and fireHook == false:
+	if velocity.y > -15 and jumpDescentAnim == false and hasJumped == true and airAttack == false and dashAnim == false and onWall == false and fireHook == false and isHooked == false:
 		_animated_sprite.play('Jump_transition')
 		jumpDescentAnim = true
 	
-	if velocity.y > 10 and jumpDescentAnim == false and hasJumped == false and not airAttack and dashAnim == false and onWall == false and fireHook == false:
+	if velocity.y > 10 and jumpDescentAnim == false and hasJumped == false and not airAttack and dashAnim == false and onWall == false and fireHook == false and isHooked == false:
 		_animated_sprite.play('Jump_fall')
 		jumpDescentAnim = true
 	
@@ -642,6 +671,8 @@ func _buffer_jump(): # Provides a 0.05s buffer for the player to jump before act
 	add_sibling(JumpVFX)
 
 func _hook_gamepad():
+	raycastHit = null
+	
 	if aimDirection.x < 0:
 		_animated_sprite.flip_h = true
 	elif aimDirection.x > 0:
@@ -658,7 +689,18 @@ func _hook_gamepad():
 				aimDirection = Vector2(0, -1)
 			else:
 				aimDirection = Vector2(1, 0)
+		$RayCastGrapplingHookRight/RayCastGrapplingHookRightAround1.rotation = 0
+		$RayCastGrapplingHookRight/RayCastGrapplingHookRightAround2.rotation = 0
+		
 		$RayCastGrapplingHookRight.target_position = aimDirection.normalized() * maxRopeLength
+		$RayCastGrapplingHookRight/RayCastGrapplingHookRightAround1.target_position = aimDirection.normalized() * maxRopeLength
+		$RayCastGrapplingHookRight/RayCastGrapplingHookRightAround1.rotation += deg_to_rad(15)
+		$RayCastGrapplingHookRight/RayCastGrapplingHookRightAround2.target_position = aimDirection.normalized() * maxRopeLength
+		$RayCastGrapplingHookRight/RayCastGrapplingHookRightAround2.rotation += deg_to_rad(-15)
+		var tree = get_tree()
+		await tree.physics_frame
+		await tree.physics_frame
+		_show_rope_gamepad()
 	else:
 		if aimDirection == Vector2(0, 0):
 			aimDirection = Vector2(-1, 0)
@@ -669,35 +711,127 @@ func _hook_gamepad():
 				aimDirection = Vector2(0, -1)
 			else:
 				aimDirection = Vector2(-1, 0)
+		$RayCastGrapplingHookLeft/RayCastGrapplingHookLeftAround1.rotation = 0
+		$RayCastGrapplingHookLeft/RayCastGrapplingHookLeftAround2.rotation = 0
+		
 		$RayCastGrapplingHookLeft.target_position = aimDirection.normalized() * maxRopeLength
+		$RayCastGrapplingHookLeft/RayCastGrapplingHookLeftAround1.target_position = aimDirection.normalized() * maxRopeLength
+		$RayCastGrapplingHookLeft/RayCastGrapplingHookLeftAround1.rotation += deg_to_rad(15)
+		$RayCastGrapplingHookLeft/RayCastGrapplingHookLeftAround2.target_position = aimDirection.normalized() * maxRopeLength
+		$RayCastGrapplingHookLeft/RayCastGrapplingHookLeftAround2.rotation += deg_to_rad(-15)
+		var tree = get_tree()
+		await tree.physics_frame
+		await tree.physics_frame
+		_show_rope_gamepad()
 
 
 func _hook_mouse():
+	raycastHit = null
+	
 	if get_global_mouse_position().x > position.x :
 		_animated_sprite.flip_h = false
-		$RayCastGrapplingHookRight.look_at(get_global_mouse_position())
-		_show_rope()
+		$RayCastGrapplingHookRight/RayCastGrapplingHookRightAround1.rotation = 0
+		$RayCastGrapplingHookRight/RayCastGrapplingHookRightAround2.rotation = 0
 		
-		## What remains of the grappling hook mechanic
-		#if $RayCastGrapplingHookRight.is_colliding():
-			#var distance = global_position.distance_to(get_global_mouse_position())
-			#_spawn_rope_segments(round(distance / 30))
+		$RayCastGrapplingHookRight.look_at(get_global_mouse_position())
+		$RayCastGrapplingHookRight/RayCastGrapplingHookRightAround1.look_at(get_global_mouse_position())
+		$RayCastGrapplingHookRight/RayCastGrapplingHookRightAround1.rotation += deg_to_rad(15)
+		$RayCastGrapplingHookRight/RayCastGrapplingHookRightAround2.look_at(get_global_mouse_position())
+		$RayCastGrapplingHookRight/RayCastGrapplingHookRightAround2.rotation += deg_to_rad(-15)
+		var tree = get_tree()
+		await tree.physics_frame
+		await tree.physics_frame
+		_show_rope_mouse()
 		
 	elif get_global_mouse_position().x < position.x :
 		_animated_sprite.flip_h = true
+		$RayCastGrapplingHookLeft/RayCastGrapplingHookLeftAround1.rotation = 0
+		$RayCastGrapplingHookLeft/RayCastGrapplingHookLeftAround2.rotation = 0
+		
 		$RayCastGrapplingHookLeft.look_at(get_global_mouse_position())
-		_show_rope()
+		$RayCastGrapplingHookLeft/RayCastGrapplingHookLeftAround1.look_at(get_global_mouse_position())
+		$RayCastGrapplingHookLeft/RayCastGrapplingHookLeftAround1.rotation += deg_to_rad(15)
+		$RayCastGrapplingHookLeft/RayCastGrapplingHookLeftAround2.look_at(get_global_mouse_position())
+		$RayCastGrapplingHookLeft/RayCastGrapplingHookLeftAround2.rotation += deg_to_rad(-15)
+		var tree = get_tree()
+		await tree.physics_frame
+		await tree.physics_frame
+		_show_rope_mouse()
 	
 
-func _show_rope():
-	if $RayCastGrapplingHookRight.is_colliding() == true:
-			var rope = rope_part_scene.instantiate()
-			rope.position = $RayCastGrapplingHookRight.global_position
-			rope.look_at(get_global_mouse_position())
-			rope.rotation += deg_to_rad(90)
-			print(get_node('rope_apart'))
-			add_sibling(rope)
+func _show_rope_mouse():
+	if $RayCastGrapplingHookRight.is_colliding() == true and _animated_sprite.flip_h == false:
+		var rope = rope_part_scene.instantiate()
+		rope.position = $RayCastGrapplingHookRight.global_position
+		rope.look_at(get_global_mouse_position())
+		rope.rotation += deg_to_rad(90)
+		add_sibling(rope)
+		print(1)
+		raycastHit = $RayCastGrapplingHookRight
+		collisionPoint = $RayCastGrapplingHookRight.get_collision_point()
+		$FireGrapplingHookTimer.start()
+		hasHit = true
+		velocity.y = 0
+		
+	elif $RayCastGrapplingHookLeft.is_colliding() == true and _animated_sprite.flip_h == true:
+		var rope = rope_part_scene.instantiate()
+		rope.position = $RayCastGrapplingHookLeft.global_position
+		rope.look_at(get_global_mouse_position())
+		rope.rotation += deg_to_rad(90)
+		add_sibling(rope)
+		print(2)
+		raycastHit = $RayCastGrapplingHookLeft
+		collisionPoint = $RayCastGrapplingHookLeft.get_collision_point()
+		$FireGrapplingHookTimer.start()
+		hasHit = true
+		velocity.y = 0
 
+func _show_rope_gamepad():
+	if ($RayCastGrapplingHookRight.is_colliding() or $RayCastGrapplingHookRight/RayCastGrapplingHookRightAround1.is_colliding() or $RayCastGrapplingHookRight/RayCastGrapplingHookRightAround2.is_colliding()) == true and _animated_sprite.flip_h == false:
+		var rope = rope_part_scene.instantiate()
+		rope.position = $RayCastGrapplingHookRight.global_position
+		if $RayCastGrapplingHookRight.is_colliding():
+			rope.look_at($RayCastGrapplingHookRight.get_collision_point())
+			raycastHit = $RayCastGrapplingHookRight
+			collisionPoint = $RayCastGrapplingHookRight.get_collision_point()
+		elif $RayCastGrapplingHookRight/RayCastGrapplingHookRightAround1.is_colliding():
+			rope.look_at($RayCastGrapplingHookRight/RayCastGrapplingHookRightAround1.get_collision_point())
+			raycastHit = $RayCastGrapplingHookRight/RayCastGrapplingHookRightAround1
+			collisionPoint = $RayCastGrapplingHookRight/RayCastGrapplingHookRightAround1.get_collision_point()
+		elif $RayCastGrapplingHookRight/RayCastGrapplingHookRightAround2.is_colliding():
+			rope.look_at($RayCastGrapplingHookRight/RayCastGrapplingHookRightAround2.get_collision_point())
+			raycastHit = $RayCastGrapplingHookRight/RayCastGrapplingHookRightAround2
+			collisionPoint = $RayCastGrapplingHookRight/RayCastGrapplingHookRightAround2.get_collision_point()
+		rope.rotation += deg_to_rad(90)
+		add_sibling(rope)
+		print(3)
+		$FireGrapplingHookTimer.start()
+		hasHit = true
+		velocity.y = 0
+		
+	elif ($RayCastGrapplingHookLeft.is_colliding() or $RayCastGrapplingHookLeft/RayCastGrapplingHookLeftAround1.is_colliding() or $RayCastGrapplingHookLeft/RayCastGrapplingHookLeftAround2.is_colliding()) == true and _animated_sprite.flip_h == true:
+		var rope = rope_part_scene.instantiate()
+		rope.position = $RayCastGrapplingHookLeft.global_position
+		if $RayCastGrapplingHookLeft.is_colliding():
+			rope.look_at($RayCastGrapplingHookLeft.get_collision_point())
+			raycastHit = $RayCastGrapplingHookLeft
+			collisionPoint = $RayCastGrapplingHookLeft.get_collision_point()
+		elif $RayCastGrapplingHookLeft/RayCastGrapplingHookLeftAround1.is_colliding():
+			rope.look_at($RayCastGrapplingHookLeft/RayCastGrapplingHookLeftAround1.get_collision_point())
+			raycastHit = $RayCastGrapplingHookLeft/RayCastGrapplingHookLeftAround1
+			collisionPoint = $RayCastGrapplingHookLeft/RayCastGrapplingHookLeftAround1.get_collision_point()
+		elif $RayCastGrapplingHookLeft/RayCastGrapplingHookLeftAround2.is_colliding():
+			rope.look_at($RayCastGrapplingHookLeft/RayCastGrapplingHookLeftAround2.get_collision_point())
+			raycastHit = $RayCastGrapplingHookLeft/RayCastGrapplingHookLeftAround2
+			collisionPoint = $RayCastGrapplingHookLeft/RayCastGrapplingHookLeftAround2.get_collision_point()
+		rope.rotation += deg_to_rad(90)
+		add_sibling(rope)
+		print(4)
+		$FireGrapplingHookTimer.start()
+		hasHit = true
+		velocity.y = 0
+
+## Ancient code for trying to steal someone else's work instead of doing it myself... it did not work, autonomy wins
 #func _spawn_rope_segments(count):
 	#print(count)
 	#for i in count:
@@ -713,7 +847,6 @@ func _show_rope():
 			#print('Middle Rope')
 			#_spawn_rope()
 			#_attach_rope_to_rope()
-## Abandoned code for the grappling mechanic, I don't have time nor energy to make it work right now, might come back to it
 #func _spawn_rope():
 	#var rope = rope_part_scene.instantiate()
 	#if _animated_sprite.flip_h == false:
@@ -870,7 +1003,21 @@ func _on_between_grappling_hook_timer_timeout():
 func _on_smooth_transition_dash_timer_timeout():
 	if Input.get_axis('Move_left', 'Move_right') != 0 and is_on_floor():
 		_animated_sprite.play('Run')
-	elif not is_on_floor() and not is_on_wall():
+	elif not is_on_floor() and not is_on_wall() and fireHook == false:
 		_animated_sprite.play('Jump_fall')
 	else:
 		pass
+
+
+func _on_fire_grappling_hook_timer_timeout():
+	isHooked = true
+	$EscapeHellGrapplingHookTimer.start()
+	_animated_sprite.play('Throw_end')
+
+
+func _on_escape_hell_grappling_hook_timer_timeout():
+	isHooked = false
+	hasHit = false
+	fireHook = false
+	canMove = true
+	canAttack = true

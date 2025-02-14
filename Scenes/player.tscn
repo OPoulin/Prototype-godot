@@ -1,4 +1,4 @@
-[gd_scene load_steps=177 format=3 uid="uid://bu8i6cytjnbpk"]
+[gd_scene load_steps=176 format=3 uid="uid://bu8i6cytjnbpk"]
 
 [ext_resource type="Script" path="res://Scripts/player.gd" id="1_lrsar"]
 [ext_resource type="PackedScene" uid="uid://otsjniw1275n" path="res://Scenes/JumpVFX.tscn" id="2_0fxkb"]
@@ -490,10 +490,6 @@ region = Rect2(192, 0, 96, 96)
 [sub_resource type="AtlasTexture" id="AtlasTexture_gtwwu"]
 atlas = ExtResource("23_pgjeq")
 region = Rect2(288, 0, 96, 96)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_rril5"]
-atlas = ExtResource("23_pgjeq")
-region = Rect2(384, 0, 96, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_axhos"]
 atlas = ExtResource("23_pgjeq")
@@ -994,9 +990,6 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_rril5")
-}, {
-"duration": 1.0,
 "texture": SubResource("AtlasTexture_axhos")
 }, {
 "duration": 1.0,
@@ -1142,6 +1135,7 @@ height = 154.0
 
 [node name="Player" type="CharacterBody2D"]
 position = Vector2(2, 51)
+collision_mask = 3
 script = ExtResource("1_lrsar")
 DoubleJumpVFXScene = ExtResource("2_qdi2u")
 JumpVFXScene = ExtResource("2_0fxkb")
@@ -1205,8 +1199,10 @@ visibility_rect = Rect2(0.683105, -1721.91, 5062.5, 4229.03)
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 scale = Vector2(3, 3)
 sprite_frames = SubResource("SpriteFrames_kbxl5")
-animation = &"Dash"
+animation = &"Throw_end"
 autoplay = "Idle"
+frame = 1
+frame_progress = 1.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(4, 51)
@@ -1352,11 +1348,24 @@ position = Vector2(94.029, 52.507)
 target_position = Vector2(450, 0)
 collide_with_areas = true
 
+[node name="RayCastGrapplingHookRightAround1" type="RayCast2D" parent="RayCastGrapplingHookRight"]
+target_position = Vector2(450, 0)
+
+[node name="RayCastGrapplingHookRightAround2" type="RayCast2D" parent="RayCastGrapplingHookRight"]
+target_position = Vector2(450, 0)
+
 [node name="RayCastGrapplingHookLeft" type="RayCast2D" parent="."]
 position = Vector2(-94.971, 52.507)
 target_position = Vector2(450, 0)
 
+[node name="RayCastGrapplingHookLeftAround1" type="RayCast2D" parent="RayCastGrapplingHookLeft"]
+target_position = Vector2(450, 0)
+
+[node name="RayCastGrapplingHookLeftAround2" type="RayCast2D" parent="RayCastGrapplingHookLeft"]
+target_position = Vector2(450, 0)
+
 [node name="FireGrapplingHookTimer" type="Timer" parent="."]
+wait_time = 0.2
 one_shot = true
 
 [node name="GrapplingHookResetTimer" type="Timer" parent="."]
@@ -1365,6 +1374,10 @@ one_shot = true
 
 [node name="BetweenGrapplingHookTimer" type="Timer" parent="."]
 wait_time = 1.2
+one_shot = true
+
+[node name="EscapeHellGrapplingHookTimer" type="Timer" parent="."]
+wait_time = 0.25
 one_shot = true
 
 [connection signal="animation_finished" from="AnimatedSprite2D" to="." method="_on_animated_sprite_2d_animation_finished"]
@@ -1389,5 +1402,7 @@ one_shot = true
 [connection signal="timeout" from="AirDashAnimTimer" to="." method="_on_air_dash_anim_timer_timeout"]
 [connection signal="timeout" from="WallClingResetTimer" to="." method="_on_wall_cling_reset_timer_timeout"]
 [connection signal="timeout" from="WallJumptimer" to="." method="_on_wall_jumptimer_timeout"]
+[connection signal="timeout" from="FireGrapplingHookTimer" to="." method="_on_fire_grappling_hook_timer_timeout"]
 [connection signal="timeout" from="GrapplingHookResetTimer" to="." method="_on_grappling_hook_reset_timer_timeout"]
 [connection signal="timeout" from="BetweenGrapplingHookTimer" to="." method="_on_between_grappling_hook_timer_timeout"]
+[connection signal="timeout" from="EscapeHellGrapplingHookTimer" to="." method="_on_escape_hell_grappling_hook_timer_timeout"]
