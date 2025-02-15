@@ -1,4 +1,4 @@
-[gd_scene load_steps=176 format=3 uid="uid://bu8i6cytjnbpk"]
+[gd_scene load_steps=177 format=3 uid="uid://bu8i6cytjnbpk"]
 
 [ext_resource type="Script" path="res://Scripts/player.gd" id="1_lrsar"]
 [ext_resource type="PackedScene" uid="uid://otsjniw1275n" path="res://Scenes/JumpVFX.tscn" id="2_0fxkb"]
@@ -32,6 +32,10 @@
 [ext_resource type="Texture2D" uid="uid://bd0proevadklf" path="res://Assets prototype/Character/Character_sprites_placeholder/Spritesheets/WALL JUMP.png" id="26_kam7n"]
 [ext_resource type="Texture2D" uid="uid://7kx4la4qleh0" path="res://Assets prototype/Character/Character_sprites_placeholder/Spritesheets/WALL JUMP 2.png" id="27_15ahg"]
 [ext_resource type="Texture2D" uid="uid://dal0nr0jn8x58" path="res://Assets prototype/Character/Character_sprites_placeholder/Spritesheets/WALL SLIDE 2.png" id="28_87721"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_1ayj7"]
+radius = 18.0
+height = 92.0
 
 [sub_resource type="Curve" id="Curve_st86l"]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
@@ -1151,6 +1155,15 @@ maxRopeLength = 600
 rope_part_scene = ExtResource("11_4k80s")
 metadata/_edit_group_ = true
 
+[node name="TriggerCharacter" type="Area2D" parent="."]
+position = Vector2(4, 51)
+collision_layer = 4
+collision_mask = 4
+input_pickable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TriggerCharacter"]
+shape = SubResource("CapsuleShape2D_1ayj7")
+
 [node name="Camera2D" type="Camera2D" parent="."]
 limit_left = -350
 limit_bottom = 800
@@ -1171,6 +1184,7 @@ position = Vector2(-1542, -174)
 rotation = 0.158953
 process_material = SubResource("ParticleProcessMaterial_8lrst")
 lifetime = 14.0
+preprocess = 30.0
 speed_scale = 0.6
 visibility_rect = Rect2(0.930176, -766.396, 3767.67, 2351.44)
 
@@ -1182,6 +1196,7 @@ rotation = 0.158953
 amount = 14
 process_material = SubResource("ParticleProcessMaterial_rc7if")
 lifetime = 12.0
+preprocess = 30.0
 speed_scale = 0.75
 visibility_rect = Rect2(0.376099, -2232.18, 4550.71, 3869.49)
 
@@ -1193,6 +1208,7 @@ rotation = 0.158953
 amount = 6
 process_material = SubResource("ParticleProcessMaterial_h8q88")
 lifetime = 10.0
+preprocess = 30.0
 speed_scale = 0.9
 visibility_rect = Rect2(0.683105, -1721.91, 5062.5, 4229.03)
 

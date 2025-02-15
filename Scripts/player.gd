@@ -473,7 +473,6 @@ func _physics_process(delta):
 			#var collider = $RayCastCheckGround.get_collider()
 			#var cell = collider.local_to_map($RayCastCheckGround.get_collision_point())
 			global_position += Vector2(0, 3)
-			print('aaa')
 			#if cell == Vector2i(2, 2) or cell == Vector2i(1, 2) or cell == Vector2i(0, 2):
 				#$CollisionShape2D.disabled = true
 				#$DropThroughTimer.start()
@@ -766,7 +765,6 @@ func _show_rope_mouse():
 		rope.look_at(get_global_mouse_position())
 		rope.rotation += deg_to_rad(90)
 		add_sibling(rope)
-		print(1)
 		raycastHit = $RayCastGrapplingHookRight
 		collisionPoint = $RayCastGrapplingHookRight.get_collision_point()
 		$FireGrapplingHookTimer.start()
@@ -779,7 +777,6 @@ func _show_rope_mouse():
 		rope.look_at(get_global_mouse_position())
 		rope.rotation += deg_to_rad(90)
 		add_sibling(rope)
-		print(2)
 		raycastHit = $RayCastGrapplingHookLeft
 		collisionPoint = $RayCastGrapplingHookLeft.get_collision_point()
 		$FireGrapplingHookTimer.start()
@@ -804,7 +801,6 @@ func _show_rope_gamepad():
 			collisionPoint = $RayCastGrapplingHookRight/RayCastGrapplingHookRightAround2.get_collision_point()
 		rope.rotation += deg_to_rad(90)
 		add_sibling(rope)
-		print(3)
 		$FireGrapplingHookTimer.start()
 		hasHit = true
 		velocity.y = 0
@@ -826,7 +822,6 @@ func _show_rope_gamepad():
 			collisionPoint = $RayCastGrapplingHookLeft/RayCastGrapplingHookLeftAround2.get_collision_point()
 		rope.rotation += deg_to_rad(90)
 		add_sibling(rope)
-		print(4)
 		$FireGrapplingHookTimer.start()
 		hasHit = true
 		velocity.y = 0

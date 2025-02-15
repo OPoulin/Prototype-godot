@@ -8,6 +8,7 @@
 layer = -100
 
 [node name="ColorRect" type="ColorRect" parent="CanvasLayer"]
+z_index = -300
 offset_left = -31236.0
 offset_top = -28477.0
 offset_right = 47617.0
